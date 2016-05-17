@@ -29,7 +29,8 @@ beyond the scope of this document, but some resources that explain it (among oth
 
 - [Simple Made Easy](http://www.infoq.com/presentations/Simple-Made-Easy) - Rich Hickey
 - [Narcissisic Design](https://vimeo.com/77199361) - Stuart Halloway
-- [Data Beats Functions](https://malcolmsparks.com/posts/data-beats-functions.html) - Malcolm Spar- [Always Be Composing](https://www.youtube.com/watch?v=3oQTSP4Fng) - Zach Tellman
+- [Data Beats Functions](https://malcolmsparks.com/posts/data-beats-functions.html) - Malcolm Sparks
+- [Always Be Composing](https://www.youtube.com/watch?v=3oQTSP4Fng) - Zach Tellman
 - [Data > Functions > Macros](http://www.lispcast.com/data-functions-macros-why) - Eric Normand
 
 Finally, one weakness of many existing Clojure libraries, especially
