@@ -8,7 +8,7 @@ Arachne has a number of goals.
    different developers, should be usable and swappable in the same
    application with a minimum of effort.
 
-2. Arachne applications need to be *transparant* and
+2. Arachne applications need to be *transparent* and
    *introspectable*. It should always be as clear as possible what is
    going on at any given moment, and why the application is behaving
    in the way it does.
@@ -18,17 +18,17 @@ Arachne has a number of goals.
    *configurable* to suit the unique needs of users.
 
 
-Also, it is a good develompent practice (particularly in Clojure) to
+Also, it is a good development practice (particularly in Clojure) to
 code to a specific information model (that is, data) rather than to
 particular functions or APIs. Along with other benefits, this helps
-seperate (avoids "complecting") the intended operation and its
+separate (avoids "complecting") the intended operation and its
 implementation.
 
 Documenting the full rationale for this "data first" philosophy is
 beyond the scope of this document, but some resources that explain it (among other things) are:
 
 - [Simple Made Easy](http://www.infoq.com/presentations/Simple-Made-Easy) - Rich Hickey
-- [Narcissisic Design](https://vimeo.com/77199361) - Stuart Halloway
+- [Narcissistic Design](https://vimeo.com/77199361) - Stuart Halloway
 - [Data Beats Functions](https://malcolmsparks.com/posts/data-beats-functions.html) - Malcolm Sparks
 - [Always Be Composing](https://www.youtube.com/watch?v=3oQTSP4Fng) - Zach Tellman
 - [Data > Functions > Macros](http://www.lispcast.com/data-functions-macros-why) - Eric Normand
@@ -38,8 +38,8 @@ web development libraries, is the way in which they overload the
 Clojure runtime (particularly vars and reified namespaces) to store
 information about the webapp. Because both the Clojure runtime and
 many web application entities (e.g servers) are stateful, this causes
-a variety of issues, particuarly with reloading namespaces. Therefore,
-as much as possible, we would like to avoid enangling information
+a variety of issues, particularly with reloading namespaces. Therefore,
+as much as possible, we would like to avoid entangling information
 about an Arachne application with the Clojure runtime itself.
 
 ## Decision
@@ -66,14 +66,14 @@ properties are.
 
 Each distinct module will have the ability to contribute to the schema
 and define entity types specific to its own domain. Modules which must
-interact or depend on eachother may reference entity types and
+interact or depend on each other may reference entity types and
 properties defined in the other, in addition to their own.
 
-Although it has much in common with an fully general in-memory
+Although it has much in common with a fully general in-memory
 database, the configuration value will be a single immutable value,
-no a stateful data store. This will avoid many of the complexities
+not a stateful data store. This will avoid many of the complexities
 of state and change, and will eliminate the temptation to use the
-configuration iself as dynamic storage for runtime data.
+configuration itself as dynamic storage for runtime data.
 
 ## Status
 
