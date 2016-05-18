@@ -42,8 +42,8 @@ that have an open-source requirement will probably prefer DataScript.
 
 The facade will present a functional, value-based interface for
 Datalog queries, pull expressions and updates (via Datomic-style
-txdata.) It will expose databases as values, not as stateful entities,
-to emphasizes the intended uses of the configuration.
+txdata). It will expose databases as values, not as stateful entities,
+to emphasize the intended uses of the configuration.
 
 Arachne will also provide an implementation that multiplexes all operations
 to both Datomic *and* DataScript, throwing an exception if the results
@@ -57,7 +57,7 @@ Proposed
 ## Consequences
 
 - The configuration will be able to store any kind of data Datomic can store.
-- The configuration have an extensible schema.
+- The configuration will have an extensible schema.
 - The capabilities of the configuration system will be well documented.
 - Arachne and Arachne modules can optionally define meta-attributes
   (attributes on attributes) to increase the expressivity of the
