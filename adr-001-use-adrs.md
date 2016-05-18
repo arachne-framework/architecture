@@ -8,7 +8,7 @@ discipline of architecture very important:
 - We want to think deeply about all our architectural decisions,
   exploring all alternatives and making a careful, considered,
   well-researched choice.
-- We want to be as transparant as possible in our decision-making
+- We want to be as transparent as possible in our decision-making
   process.
 - We don't want decisions to be made unilaterally in a
   vacuum. Specifically, we want to give our steering group the
@@ -39,7 +39,7 @@ The workflow will be:
    concerns raised, and proposed changes.
 3. Once consensus is reached, ADR can be transitioned to either an
    "accepted" or "rejected" state.
-4. Only after an ADR is accepted should implementing code be comitted
+4. Only after an ADR is accepted should implementing code be committed
    to the master branch of the relevant project/module.
 5. If a decision is revisited and a different conclusion is reached, a
    new ADR should be created documenting the context and rationale for
