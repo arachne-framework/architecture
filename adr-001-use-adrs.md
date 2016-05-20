@@ -44,7 +44,7 @@ The workflow will be:
 5. If a decision is revisited and a different conclusion is reached, a
    new ADR should be created documenting the context and rationale for
    the change. The new ADR should reference the old one, and once the
-   new one is accepted, the old one should (in it's "status" section)
+   new one is accepted, the old one should (in its "status" section)
    be updated to point to the new one. The old ADR should not be
    removed or otherwise modified except for the annotation pointing to
    the new ADR.
