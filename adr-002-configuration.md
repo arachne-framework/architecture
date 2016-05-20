@@ -65,9 +65,9 @@ of entities can exist in the configuration, and what their expected
 properties are.
 
 Each distinct module will have the ability to contribute to the schema
-and define entity types specific to its own domain. Modules which must
-interact or depend on each other may reference entity types and
-properties defined in the other, in addition to their own.
+and define entity types specific to its own domain. Modules may
+interact by referencing entity types and properties defined in other
+modules.
 
 Although it has much in common with a fully general in-memory
 database, the configuration value will be a single immutable value,
