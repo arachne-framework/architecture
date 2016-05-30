@@ -10,59 +10,185 @@ update the configuration value. It also implies that the configuration
 value is general enough to store arbitrary data; we don't know what
 kinds of things users or module authors will need to include.
 
-Systems that allow you to search, query and update arbitrary schema'd
-data are called databases. We should look at in-memory databases for
-implementations of the configuration.
+If what we need is a system that allows you to define, query, and
+update arbitrary data with a schema, then we are looking for a
+database.
 
-The selected database needs to have an *extensible* schema
-system. Because each module will contribute its own portion of the
-schema, it needs to be possible to iteratively expand the schema
-rather than declaring it all at once.
+The database we select needs to have the following characteristics:
 
-Ideally, the selected database should be easy to use with Clojure, and
-be familiar enough to a critical mass of module developers that they
-can get started with it right away.
+1. It must be available under a permissive open source
+   license. Anything else will impose unwanted restrictions on who can
+   use Arachne.
+2. It can operate embedded in a JVM process. We do not want to force
+   users to install anything else or run multiple processes just to
+   get Arachne to work.
+3. The database must be serializable. It must be possible to write the
+   entire configuration to disk, and then reconsititute it in the same
+   exact state in a separate process.
+4. Because modules build up the schema progressively, the schema must
+   be inherently extensible. It should be possible for modules to
+   progressively add both new entity types and new attributes to
+   existing entity types.
+5. It should be usable from Clojure without a large impedance mismatch.
 
-There are two classes of systems that roughly meet this criteria:
+There are instances of four broad categories of data stores that meet
+the first three of these requirements:
 
-- Datomic
-- RDF with a RDFs/OWL schema
+- Relational (Derby, HSQLDB, etc)
+- Key/value (BerkelyDB, hashtables, etc)
+- RDF/RDFs/OWL (Jena)
+- Datomic-style (Datascript)
 
-In order to make it usable by the largest number of people, Arachne's
-core needs to function entirely on permissive open-source software; a
-hard requirement for proprietary or GPL-licensed code will make it
-unviable for many users.
+We can eliminate relational solutions fairly quickly; SQL schemas are
+not generally extensible or flexible, failing condition #4. In
+addition, they do not fare well on #5 -- using SQL for queries and updates
+is not particularly fluent in Clojure.
+
+Similarly, we can eliminate key/value style data stores. In general,
+these do not have schemas at all (or at least, not the type of rich
+schema that provides a meaningful data contract, which is the point
+for Arachne.)
+
+This leaves solutions based on the RDF stack, and Datomic-style data
+stores. Both are viable options which would provide unique benefits
+for Arachne, and both have different drawbacks.
+
+Explaining the core technical characteristics of RDF/OWL and Datomic
+is beyond the scope of this document; please see the
+[Jena](https://jena.apache.org/documentation/index.html) and
+[Datomic](http://docs.datomic.com) documentation for more
+details. More information on RDF, OWL and the Semantic web in general:
+
+- [Wikipedia article on RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)
+- [Wikipedia article on OWL](https://en.wikipedia.org/wiki/Web_Ontology_Language)
+- [OWL Semantics](http://www.w3.org/TR/owl-semantics/) standards document.
+
+### RDF
+
+The clear choice for a JVM-based, permissively licensed,
+standards-compliant RDF API is Apache Jena.
+
+#### Benefits for Arachne
+
+- OWL is all about ontologies. This is a good fit for what Arachne is
+  trying to do; the point of the configuration schema is first and
+  foremost to serve as unambiguous communication regarding the types
+  of entities that can exist in an application, and what the possible
+  relationships between them are. By definition, this is defining an
+  ontology, and is the exact use case which OWL is designed to address.
+- Information model is a good fit for Clojure: tuples and declarative logic.
+- Open and extensible by design.
+- Well researched by very smart people, likely to avoid common
+  mistakes that would result from building an ontology-like system
+  ourselves.
+- Existing technology, well known beyond the Clojure
+  ecosystem. Existing tools could work with Arachne project
+  configurations out of the box.
+- The open-world assumption is a good fit for Arachne's per-module
+  schema modeling, since modules cannot know what other modules might
+  be present in the application.
+- We're likely to want to introduce RDFs/OWL to the application
+  anyway, at some point, as an abstract entity meta-schema (note: this
+  has not been firmly decided yet.)
+
+#### Tradeoffs for Arachne (with mitigations)
+
+- OWL is complex. Learning to use it effectively is a skill in its own
+  right and it might be asking a lot to require of module authors.
+- OWLs representation of some common concepts can be verbose and/or
+  convoluted in ways that would make schema more difficult to
+  read/write. (e.g, Restriction classes)
+- OWL is not a schema. Although the open world assumption is valid and
+  good when writing ontologies, it means that OWL inferencing is
+  incapable of performing many of the kind of validations we would
+  want to apply once we do have a complete configuration and want to
+  check it for correctness. For example, open-world reasoning can
+  never validate a `owl:minCardinality` rule.
+    - Mitgation: Although OWL inferencing cannot provide closed-world
+    validation of a given RDF dataset, such tools do exist. Some
+    mechanisms for validating a particular closed set of RDF triples
+    include:
+       1. Writing SPARQL queries that catch various types of validation errors.
+       2. Deriving validation errors using Jena's rules engine.
+       3. Using an existing RDF validator such as
+      [Eyeball](https://jena.apache.org/documentation/tools/eyeball-getting-started.html)
+      (although, unfortunately, Eyeball does not seem to be well
+      maintained.)
+- Jena's api is aggressively object oriented and at odds with Clojure
+  idioms.
+    - Mitigation: Write a data-oriented wrapper (note: I have a
+    working proof of concept already.)
+- SPARQL is a string-based query langauge, as opposed to a composable data API.
+    - Mitigation: It is possibe to hook into Jena's ARQ query engine
+      at the object layer, and expose a data-oriented API from there,
+      with SPARQL semantics but an API similar to Datomic datalog.
+- OWL inferencing is known to have performance issues with complex
+  inferences. While Arachne configurations are tiny (as knowledge bases
+  go), and we are unlikely to use the more esoteric derivations, it is
+  unknown whether this will cause problems with the kinds of
+  ontologies we do need.
+    - Mitigation: We could restrict ourselves to the OWL DL or even
+      OWL Lite sub-languages, which have more tractable inferencing
+      rules.
+- Jena's APIs are such that it is impossible to write an immutable
+  version of a RDF model (at least without breaking most of Jena's
+  API.) It's trivial to write a data-oriented wrapper, but intractable
+  to write a persistent immutable one.
+
+### Datomic
+
+Note that Datomic itself does not satisfy the first requirement; it is
+closed-source, proprietary software. There *is* an open source
+project, Datascript, which emulates Datomic's APIs (without any of the
+storage elements). Either one would work for Arachne, since Arachne
+only needs the subset of features they both support. In, fact, if
+Arachne goes the Datomic-inspired route, we would probably want to
+support *both*: Datomic, for those who have an existing investment
+there, and Datascript for those who desire open source all the way.
+
+#### Benefits for Arachne
+
+- Well known to most Clojurists
+- Highly idiomatic to use from Clojure
+- There is no question that it would be performant and technically
+  suitable for Arachne-sized data.
+- Datomic's schema is a real validating schema; data transacted to
+  Datomic must always be valid.
+- Datomic Schema is open and extensible.
+
+#### Tradeoffs for Arachne (with mitigations)
+
+- Datomic's schema is anemic compared to RDFs/OWL; it has no built-in
+  notion of types. Therefore, it is not suitable (on its own) for
+  building observable ontologies such as we would want for Arachne.
+    - Mitigation: It is possible to build an ontology system on top of
+      Datomic using meta-attributes and Datalog rules. Examples of
+      such systems already exist.
+- If we did build our own ontology system on top of Datomic (or use an
+  existing one) we would still be responsible for "getting it right",
+  ensuring that it meets any potential use case for Arachne while
+  maintaining internal and logical consistency.
+    - Mitigation: we could still use the work that has been done in
+      the OWL world and re-implement a subset of axioms and
+      derivations on top of Datomic.
+- Any ontological system built on top of Datomic would be novel to
+  module authors, and therefore would require careful, extensive
+  documentation regarding its capabilities and usage.
+- To satisfy users of Datomic as well as those who have a requirement
+  for open source, it will be necessary to abstract across both
+  Datomic and Datascript.
+    - Mitigation: This work is already done (provided users stay
+      within the subset of features that is supported by both
+      products.)
 
 ## Decision
 
-We will provide a facade API that lets each user use Datomic (free or
-pro) or DataScript, according to their preference. Those with an
-existing investment in Datomic will likely prefer that, while those
-that have an open-source requirement will probably prefer DataScript.
-
-The facade will present a functional, value-based interface for
-Datalog queries, pull expressions and updates (via Datomic-style
-txdata). It will expose databases as values, not as stateful entities,
-to emphasize the intended uses of the configuration.
-
-Arachne will also provide an implementation that multiplexes all operations
-to both Datomic *and* DataScript, throwing an exception if the results
-don't match exactly. This is intended for use by module authors, to
-ensure that their modules work with both possible implementations.
+TBD
 
 ## Status
 
-Proposed
+Draft
 
 ## Consequences
 
-- The configuration will be able to store any kind of data Datomic can store.
-- The configuration will have an extensible schema.
-- The capabilities of the configuration system will be well documented.
-- Arachne and Arachne modules can optionally define meta-attributes
-  (attributes on attributes) to increase the expressivity of the
-  schema used by modules.
-- Module authors will need be comfortable with Datomic.
-- Module authors will need to rely upon the subset of features that
-  are fully supported in the same way by both Datomic and DataScript.
-
+TBD
