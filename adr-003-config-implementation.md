@@ -5,6 +5,8 @@
 [ADR-002](adr-002-configuration.md) indicates that we will store the
 entire application config in a single rich data structure with a schema.
 
+### Config as Database
+
 This implies that it should be possible to easily search, query and
 update the configuration value. It also implies that the configuration
 value is general enough to store arbitrary data; we don't know what
@@ -14,7 +16,7 @@ If what we need is a system that allows you to define, query, and
 update arbitrary data with a schema, then we are looking for a
 database.
 
-The database we select needs to have the following characteristics:
+Required data store characteristics:
 
 1. It must be available under a permissive open source
    license. Anything else will impose unwanted restrictions on who can
@@ -29,14 +31,56 @@ The database we select needs to have the following characteristics:
    be inherently extensible. It should be possible for modules to
    progressively add both new entity types and new attributes to
    existing entity types.
-5. It should be usable from Clojure without a large impedance mismatch.
+5. It should be usable from Clojure without a painful impedance mismatch.
 
-There are instances of four broad categories of data stores that meet
-the first three of these requirements:
+### Configuration as Ontology
+
+As an extension of the rationale discussed in
+[ADR-002](adr-002-configuration.md), it is useful to enumerate the
+possible use cases of the configuration and configuration schema
+together.
+
+- The configuration is read by the application during bootstrap and
+  controls the behavior of the application.
+- The configuration schema defines what types of values the
+  application can or will read to modify its structure and behavior at
+  boot time and run time.
+- The configuration is how an application author communicates their
+  intent about how their application should fit together and run, at a
+  higher, more conceptual level than code.
+- The configuration schema is how module authors communcate to
+  application authors what settings, entities and structures
+  are available for them to use in their applications.
+- The configuration schema is how module authors communicate to other
+  potential module authors what their extension points are; module
+  extenders can safely read or write any entities/attributes declared
+  by the modules upon which they depend.
+- The configuration schema can be used to validate a particular
+  configuration, and explain where and how it deviates from what is
+  actually supported.
+- The configuration can be exposed (via user interfaces of various
+  types) to end users for analytics and debugging, explaining the
+  structure of their application and why things are the way they are.
+- A serialization of the configuration, together with a particular
+  codebase (identified by a git SHA) form a precise, complete, 100%
+  reproducible definition of the behavior of an application.
+
+To the extent that the configuration schema expresses and communicates
+the "categories of being" or "possibility space" of an application, it
+is a formal[Ontology](https://en.wikipedia.org/wiki/Ontology). This is
+a desirable characteristic, and to the degree that it is practical to
+do so, it will be useful to learn from or re-use existing work around
+formal ontological systems.
+
+
+### Implementation Options
+
+There are instances of four broad categories of data stores that match
+the first three of the data store characteristics defined above.
 
 - Relational (Derby, HSQLDB, etc)
 - Key/value (BerkelyDB, hashtables, etc)
-- RDF/RDFs/OWL (Jena)
+- RDF/RDFs/OWL stores (Jena)
 - Datomic-style (Datascript)
 
 We can eliminate relational solutions fairly quickly; SQL schemas are
@@ -46,7 +90,7 @@ is not particularly fluent in Clojure.
 
 Similarly, we can eliminate key/value style data stores. In general,
 these do not have schemas at all (or at least, not the type of rich
-schema that provides a meaningful data contract, which is the point
+schema that provides a meaningful data contract or ontology, which is the point
 for Arachne.)
 
 This leaves solutions based on the RDF stack, and Datomic-style data
@@ -56,7 +100,7 @@ for Arachne, and both have different drawbacks.
 Explaining the core technical characteristics of RDF/OWL and Datomic
 is beyond the scope of this document; please see the
 [Jena](https://jena.apache.org/documentation/index.html) and
-[Datomic](http://docs.datomic.com) documentation for more
+ [Datomic](http://docs.datomic.com) documentation for more
 details. More information on RDF, OWL and the Semantic web in general:
 
 - [Wikipedia article on RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)
@@ -70,12 +114,13 @@ standards-compliant RDF API is Apache Jena.
 
 #### Benefits for Arachne
 
-- OWL is all about ontologies. This is a good fit for what Arachne is
-  trying to do; the point of the configuration schema is first and
-  foremost to serve as unambiguous communication regarding the types
-  of entities that can exist in an application, and what the possible
-  relationships between them are. By definition, this is defining an
-  ontology, and is the exact use case which OWL is designed to address.
+- OWL is a good fit insofar as Arachne's goal is to define an
+  ontology of applications. The point of the configuration schema is
+  first and foremost to serve as unambiguous communication regarding
+  the types of entities that can exist in an application, and what the
+  possible relationships between them are. By definition, this is
+  defining an ontology, and is the exact use case which OWL is
+  designed to address.
 - Information model is a good fit for Clojure: tuples and declarative logic.
 - Open and extensible by design.
 - Well researched by very smart people, likely to avoid common
@@ -114,7 +159,7 @@ standards-compliant RDF API is Apache Jena.
       [Eyeball](https://jena.apache.org/documentation/tools/eyeball-getting-started.html)
       (although, unfortunately, Eyeball does not seem to be well
       maintained.)
-- Jena's api is aggressively object oriented and at odds with Clojure
+- Jena's API is aggressively object oriented and at odds with Clojure
   idioms.
     - Mitigation: Write a data-oriented wrapper (note: I have a
     working proof of concept already.)
@@ -161,9 +206,10 @@ there, and Datascript for those who desire open source all the way.
 - Datomic's schema is anemic compared to RDFs/OWL; it has no built-in
   notion of types. Therefore, it is not suitable (on its own) for
   building observable ontologies such as we would want for Arachne.
-    - Mitigation: It is possible to build an ontology system on top of
-      Datomic using meta-attributes and Datalog rules. Examples of
-      such systems already exist.
+    - Mitigation: If we did want something more ontologically focused,
+      it is possible to build an ontology system on top of Datomic
+      using meta-attributes and Datalog rules. Examples of such
+      systems already exist.
 - If we did build our own ontology system on top of Datomic (or use an
   existing one) we would still be responsible for "getting it right",
   ensuring that it meets any potential use case for Arachne while
