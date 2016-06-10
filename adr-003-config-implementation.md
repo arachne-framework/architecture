@@ -159,6 +159,9 @@ standards-compliant RDF API is Apache Jena.
       [Eyeball](https://jena.apache.org/documentation/tools/eyeball-getting-started.html)
       (although, unfortunately, Eyeball does not seem to be well
       maintained.)
+    - For Clojure, it would be possible to validate a given OWL class
+      by generating a specification using `clojure.spec` that could be
+      applied to concrete instances of the class in their map form.
 - Jena's API is aggressively object oriented and at odds with Clojure
   idioms.
     - Mitigation: Write a data-oriented wrapper (note: I have a
@@ -203,9 +206,10 @@ there, and Datascript for those who desire open source all the way.
 
 #### Tradeoffs for Arachne (with mitigations)
 
-- Datomic's schema is anemic compared to RDFs/OWL; it has no built-in
-  notion of types. Therefore, it is not suitable (on its own) for
-  building observable ontologies such as we would want for Arachne.
+- The expressivity of Datomic's schema is anemic compared to RDFs/OWL;
+  for example, it has no built-in notion of types. It is focused
+  towards data storage and integrity rather than defining a public
+  ontology, which would be useful for Arachne.
     - Mitigation: If we did want something more ontologically focused,
       it is possible to build an ontology system on top of Datomic
       using meta-attributes and Datalog rules. Examples of such
@@ -229,12 +233,43 @@ there, and Datascript for those who desire open source all the way.
 
 ## Decision
 
-TBD
+The steering group decided the RDF/OWL approach is too high-risk to
+wrap in Clojure and implement at this time, while the rewards are
+mostly intangible "openness" and "interoperability" rather than
+something that will help move Arachne forward in the short term.
+
+Therefore, we will use a Datomic style schema for Arachne's configuration.
+
+Users may use either Datomic Pro, Datomic Free or Datascript at
+runtime in their applications. We will provide a "multiplexer"
+configuration implementation that utilizes both, and asserts that the
+results are equal: this can be used by module authors to ensure they
+stay within the subset of features supported by both platforms.
+
+Before Arachne leaves "alpha" status (that is, before it is declared
+ready for experimental production use or for the release of
+third-party modules), we will revisit the question of whether OWL
+would be more appropriate, and whether we have encountered issues that
+OWL would have made easier. If so, and if time allows, we reserve the
+option to refactor the configuration layer and port existing modules
+to the new RDF-based system.
 
 ## Status
 
-Draft
+Proposed
 
 ## Consequences
 
-TBD
+- It will be possible to write schemas that precisely define the
+  configuration data that modules consume.
+- The configuration system will be open and extensible to additional
+  modules by adding additional attributes and meta-attributes.
+- The system will not provide an ontologically oriented view of the
+  system's data without additional work.
+- Additional work will be required to validate configuration with
+  respect to requirements that Datomic does not support natively (e.g,
+  required attributes.)
+- Every Arachne application must include either Datomic Free, Datomic
+  Pro or Datascript as a dependency.
+- We will need to keep our eyes open to look for situations where a
+  more formal ontology system might be a better choice.
