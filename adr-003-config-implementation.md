@@ -251,8 +251,9 @@ ready for experimental production use or for the release of
 third-party modules), we will revisit the question of whether OWL
 would be more appropriate, and whether we have encountered issues that
 OWL would have made easier. If so, and if time allows, we reserve the
-option to refactor the configuration layer and port existing modules
-to the new RDF-based system.
+option to either refactor the configuration layer to use Jena as a
+primary store (porting existing modules), or provide an OWL
+view/rendering of an ontology stored in Datomic.
 
 ## Status
 
