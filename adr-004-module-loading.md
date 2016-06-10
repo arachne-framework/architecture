@@ -65,21 +65,12 @@ Each module definition map contain the following information:
 - A list of dependencies of the module (as a set of namespaced
   symbols.) Module dependencies must form a directed acyclic graph;
   circular dependencies are not allowed.
-- The module constructor, as a namespaced qualified symbol that
-  resolves to a *module constructor function*.
-
-The module constructor function is a function that takes a single
-argument: the module definition map (exactly as read, containing
-not-yet-resolved symbols.) The module constructor function must return
-an object implementing the `arachne.core.modules/Module` protocol. The
-methods on this protocol provide access to everything a else a module
-needs to be able to do.
-
-The module constructor function should avoid doing anything related to
-the logic of the application or module beyond returnign a Module
-instance. The module object should also avoid storing any state: the
-module object's methods should be pure functions of their arguments
-and the initialized module.
+- A namespace qualified symbol that resolves to the module's *schema
+  function.* A schema function is a function with no arguments that
+  returns transactable data containing the schema of the module.
+- A namespace qualified symbol that resolves to the module's
+  *configure function*. A configure function is a function that takes a
+  configuration value and returns an updated configuration.
 
 When an application is defined, the user must specify a set of module
 names to use (exact mechanism TBD.) Only the specified modules (and
@@ -87,12 +78,6 @@ their dependencies) will be considered by Arachne. In other words,
 merely including a module as a dependency in the package manager is
 not sufficient to activate it and cause it to be used in an
 application.
-
-Similarly, in a deployment context, Arachne will be oriented towards
-"immutable" or blue/green deployments, avoiding downtime at the
-infrastructure level rather than attempting to support hot reloading
-in a single process. This substantially simplifies the design of
-Arachne in general, particularly the module system.
 
 ## Status
 
@@ -102,20 +87,26 @@ Proposed
 
 - Creating a basic module is lightweight, requiring only:
     - writing a short EDN file
-    - writing a constructor function
-    - implementing a protocol
-- Consuming modules will use the same existing mechanisms as consuming
-  a library.
+    - writing a function that returns schema
+    - writing a function that queries and/or updates a configuration
+- From a user's point of view, consuming modules will use the same
+  familiar mechanisms as consuming a library.
 - Arachne is not responsible for getting code on the classpath; that
-  is a separate and prior concern.
+  is a separate concern.
 - We will need to think of a straightforward, simple way for
   application authors to specify the modules they want to be active.
 - Arachne is not responsible for any complexities of publishing,
   downloading or versioning modules
-- Module versioning has all of the drawbacks of Maven's version
-  system, including the pain of resolving conflicting versions. This
-  situation is effectively the same as it is now with Clojure
+- Module versioning has all of the drawbacks of the package manager's
+  (usually Maven), including the pain of resolving conflicting
+  versions. This situation with respect to dependency version
+  management will be effectively the same as it is now with Clojure
   libraries.
-- A single Maven artifact can contain several Arachne modules (whether
-  this is ever desirable is another question.)
+- A single dependency management artifact can contain several Arachne
+  modules (whether this is ever desirable is another question.)
+- Although Maven is currently the default dependency/packaging tool
+  for the Clojure ecosystem, Arachne is not specified to use only
+  Maven. If an alternative system gains traction, it will be possible
+  to package and publish Arachne modules using that.
+
 
