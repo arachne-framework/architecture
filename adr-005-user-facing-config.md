@@ -96,7 +96,7 @@ As a trivial example, instead of writing the verbose configuration data:
 You could write the corresponding DSL:
 
 ```clojure
-(server :my.app/server 8080 true)
+(server :id :my.app/server, :port 8080, :debug true)
 ```
 
 Note that this is a illustrative example and does not represent the
