@@ -23,12 +23,23 @@ This additional data could serve three purposes:
 
 ## Decision
 
-TBD
+- We will add meta-attributes to the schema of every configuration, expressing basic ontological relationships.
+- These attributes will be semantically compatible with OWL (such that we could concievably in the future generate an OWL ontology from a config schema)
+- The initial set of these attributes will be minimal, and targeted towards the information necessary to generate rich schema diagrams
+  - classes and superclass
+  - attribute domain
+  - attribute range (for ref attributes)
+  - min and max cardinality
+- Arachne core will provide some (optional) utility functions for schema generation, to make writing module schemas less verbose.
 
 ## Status
 
-DRAFT
+PROPOSED
 
 ## Consequences
 
-TBD
+- Arachne schemas will reify the concept of entity type and the possible relationships between entities of various types.
+- We will have an approach for adding additional semantic attributes in the future, as it makes sense to do so.
+- We will not be obligated to define an entire ontology up front
+- Modules usage of the defined ontology is not technically enforced. Some, (such as entity type relationships) will be the strong convention and possibly required for tool support; others (such as min and max cardinality) will be optional.
+- We will preserve the possibilty for interop with OWL in the future.
