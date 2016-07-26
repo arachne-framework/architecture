@@ -25,7 +25,7 @@ Required data store characteristics:
    users to install anything else or run multiple processes just to
    get Arachne to work.
 3. The database must be serializable. It must be possible to write the
-   entire configuration to disk, and then reconsititute it in the same
+   entire configuration to disk, and then reconstitute it in the same
    exact state in a separate process.
 4. Because modules build up the schema progressively, the schema must
    be inherently extensible. It should be possible for modules to
@@ -48,7 +48,7 @@ together.
 - The configuration is how an application author communicates their
   intent about how their application should fit together and run, at a
   higher, more conceptual level than code.
-- The configuration schema is how module authors communcate to
+- The configuration schema is how module authors communicate to
   application authors what settings, entities and structures
   are available for them to use in their applications.
 - The configuration schema is how module authors communicate to other
@@ -67,7 +67,7 @@ together.
 
 To the extent that the configuration schema expresses and communicates
 the "categories of being" or "possibility space" of an application, it
-is a formal[Ontology](https://en.wikipedia.org/wiki/Ontology). This is
+is a formal [Ontology](https://en.wikipedia.org/wiki/Ontology). This is
 a desirable characteristic, and to the degree that it is practical to
 do so, it will be useful to learn from or re-use existing work around
 formal ontological systems.
@@ -149,7 +149,7 @@ standards-compliant RDF API is Apache Jena.
   want to apply once we do have a complete configuration and want to
   check it for correctness. For example, open-world reasoning can
   never validate a `owl:minCardinality` rule.
-    - Mitgation: Although OWL inferencing cannot provide closed-world
+    - Mitigation: Although OWL inferencing cannot provide closed-world
     validation of a given RDF dataset, such tools do exist. Some
     mechanisms for validating a particular closed set of RDF triples
     include:
@@ -166,8 +166,8 @@ standards-compliant RDF API is Apache Jena.
   idioms.
     - Mitigation: Write a data-oriented wrapper (note: I have a
     working proof of concept already.)
-- SPARQL is a string-based query langauge, as opposed to a composable data API.
-    - Mitigation: It is possibe to hook into Jena's ARQ query engine
+- SPARQL is a string-based query language, as opposed to a composable data API.
+    - Mitigation: It is possible to hook into Jena's ARQ query engine
       at the object layer, and expose a data-oriented API from there,
       with SPARQL semantics but an API similar to Datomic datalog.
 - OWL inferencing is known to have performance issues with complex
