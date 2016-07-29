@@ -1,4 +1,4 @@
-# Architecture Decision Record: Abstract Modules
+# Architecture Decision Record: Configuration Ontology
 
 ## Context
 
