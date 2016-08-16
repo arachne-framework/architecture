@@ -4,7 +4,7 @@
 
 Per [ADR-003](adr-003-config-implementation.md), Arachne uses
 Datomic-shaped data for configuration. Although this is a flexible,
-extensible data structure which is a great fit for programmmatic
+extensible data structure which is a great fit for programmatic
 manipulation, in its literal form it is quite verbose.
 
 It is quite difficult to understand the structure of Datomic data by
