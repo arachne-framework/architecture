@@ -39,8 +39,9 @@ Each module would then need to provide a mapping from the EDN config
 format to the underlying Datomic-style config data.
 
 Because Arachne's configuration is so much broader, and defines so
-much more of an application than a standard, it is questionable if
-standard nested EDN data would be a good fit for representing it.
+much more of an application than a typical application config file, 
+it is questionable if standard nested EDN data would be a good fit 
+for representing it.
 
 #### Option: Code-based configuration
 
