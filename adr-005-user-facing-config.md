@@ -4,7 +4,7 @@
 
 Per [ADR-003](adr-003-config-implementation.md), Arachne uses
 Datomic-shaped data for configuration. Although this is a flexible,
-extensible data structure which is a great fit for progammatic
+extensible data structure which is a great fit for programmatic
 manipulation, in its literal form it is quite verbose.
 
 It is quite difficult to understand the structure of Datomic data by
@@ -75,7 +75,7 @@ runtime application.
 
 To further emphasize the difference between configuration scripts and
 runtime code, and because they are not on the classpath, configuration
-scripts will not have namespaces and will instead include eachother
+scripts will not have namespaces and will instead include each other
 via Clojure's `load` function.
 
 Arachne will provide code supporting the ability of module authors to
@@ -100,7 +100,7 @@ You could write the corresponding DSL:
 (server :id :my.app/server, :port 8080, :debug true)
 ```
 
-Note that this is a illustrative example and does not represent the
+Note that this is an illustrative example and does not represent the
 actual DSL or config for the HTTP module.
 
 DSLs should make heavy use of Spec to make errors as comprehensible as possible.
@@ -115,7 +115,7 @@ Proposed
   without writing config data by hand.
 - Users will have access to the full power of the Clojure programming
   language when configuring their application. This grants a great deal
-  of power and flexibility, but also the risk of users doing unadvisable
+  of power and flexibility, but also the risk of users doing inadvisable
   things in their config scripts (e.g, non-repeatable side effects.)
 - Module authors will bear the responsibility of providing
   an appropriate, user-friendly DSL interface to their configuration data.
