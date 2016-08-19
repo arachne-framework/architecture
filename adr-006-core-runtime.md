@@ -17,14 +17,14 @@ There are several logically inherent subtasks to this bootstrapping process, whi
     - Reading the initial user-supplied configuration (i.e, the configuration scripts from [ADR-005](adr-005-user-facing-config.md))
     - Initializing the Arachne configuration given a project's set of modules (described in [ADR-002](adr-002-configuration.md) and [ADR-004](adr-004-module-loading.md))
 - Application Specific
-    - Instantiate user and module-defined objects that needs to exist at runtime.
+    - Instantiate user and module-defined objects that need to exist at runtime.
     - Start and stop user and module-defined services
 
 As discussed in [ADR-004](adr-004-module-loading.md), tasks in the "starting the JVM" category are not in-scope for Arachne; rather, they are offloaded to whatever build/dependency tool the project is using (usually either [boot](http://boot-clj.com) or [leiningen](http://leiningen.org).)
 
 This leaves the Arachne and application-specific startup tasks. Arachne should provide an orderly, structured startup (and shutdown) procedure, and make it possible for modules and application authors to hook into it to ensure that their own code initializes, starts and stops as desired.
 
-Additionally, it must be possible for different system components to have dependencies on eachother, such that when starting, services start *after* the services upon which they depend. Stopping should occur in reverse-dependency order, such that a service is never in a state where it is running but one of its dependencies is stopped.
+Additionally, it must be possible for different system components to have dependencies on each other, such that when starting, services start *after* the services upon which they depend. Stopping should occur in reverse-dependency order, such that a service is never in a state where it is running but one of its dependencies is stopped.
 
 ## Decision
 
@@ -32,7 +32,7 @@ Additionally, it must be possible for different system components to have depend
 
 Arachne uses the [Component](https://github.com/stuartsierra/component) library to manage system components. Instead of requiring users to define a component system map manually, however, Arachne itself builds one based upon the Arachne config via *Configuration Entities* that appear in the configuration.
 
-Component entities may be added to the config directly by end users (via a initialization script as per [ADR-005](adr-005-user-facing-config.md)), or by modules in their `configure` function ([ADR-004](module-loading.md).)
+Component entities may be added to the config directly by end users (via an initialization script as per [ADR-005](adr-005-user-facing-config.md)), or by modules in their `configure` function ([ADR-004](module-loading.md).)
 
 Component entities have attributes which indicates which other components they depend upon. Circular dependencies are not allowed; the component dependency structure must form a Directed Acyclic Graph (DAG.) The dependency attributes also specify the key that Component will use to `assoc` dependencies.
 
@@ -44,13 +44,13 @@ The top-level entity in an Arachne system is a reified *Arachne Runtime* object.
 
 The constructor function for a Runtime takes a configuration value and some number of "roots"; entity IDs or lookup refs of Component entities in the config. Only these root components and their transitive dependencies will be instantiated or added to the Component system. In other words, only component entities that are actually used will be instantiated; unused component entities defined in the config will be ignored.
 
-A `lookup` function will be provided to find the runtime object instance of a component, given its entity ID or lookup ref in the configuraiton.
+A `lookup` function will be provided to find the runtime object instance of a component, given its entity ID or lookup ref in the configuration.
 
 #### Startup Procedure
 
 Arachne will rely upon an external build tool (such as boot or leiningen.) to handle downloading dependencies, assembling a classpath, and starting a JVM.
 
-Once JVM with the correct classpath is running, the following steps are required to yield a running Arachne runtime:
+Once a JVM with the correct classpath is running, the following steps are required to yield a running Arachne runtime:
 
 1. Determine a set of modules to use (the "active modules")
 2. Build a configuration schema by querying each active module using its `schema` function ([ADR-004](module-loading.md))
@@ -70,5 +70,5 @@ PROPOSED
 
 - It is possible to fully define the system components and their dependencies in an application's configuration. This is how Arachne achieves dependency injection and inversion of control.
 - It is possible to explicitly create, start and stop Arachne runtimes.
-- Multiple Arachne runtimes may co-exist in the same JVM (although they may conflict and fail to start if they both attempt to use a global resource such as a HTTP port)
+- Multiple Arachne runtimes may co-exist in the same JVM (although they may conflict and fail to start if they both attempt to use a global resource such as an HTTP port)
 - By specifying different root components when constructing a runtime, it is possible to run different types of Arachne applications based on the same Arachne configuration value.
