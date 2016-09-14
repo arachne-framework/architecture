@@ -6,13 +6,13 @@ A core part of the process of developing an application is making changes to its
 
 In a development context, developers will want to see these changes reflected in their running application as quickly as possible. Keeping the test/modify cycle short is an important goal.
 
-However, accomodating change is a source of complexity. Extra code would be required to handle  "update" scenarios. Components are initialized with a particular configuration in hand. While it would be possible to require that every component support an `update` operation to recieve an arbitrary new config, implementing this is non-trivial and would likely need to involve conditional logic to determine the ways in which the new configuration is different from the old. If any mistakes where made in the implementation of `update`, *for any component*, such that the result was not identical to a clean restart, it would be possible to put the system in an inconsistent, unreproducible state.
+However, accommodating change is a source of complexity. Extra code would be required to handle  "update" scenarios. Components are initialized with a particular configuration in hand. While it would be possible to require that every component support an `update` operation to receive an arbitrary new config, implementing this is non-trivial and would likely need to involve conditional logic to determine the ways in which the new configuration is different from the old. If any mistakes where made in the implementation of `update`, *for any component*, such that the result was not identical to a clean restart, it would be possible to put the system in an inconsistent, unreproducible state.
 
 The "simplest" approach is to avoid the issue and completely discard and rebuild the Arachne runtime ([ADR-006](adr-006-core-runtime)) every time the configuration is updated. Every modification to the config would be applied via a clean start, guaranteeing reproducibility and a single code path.
 
 However, this simple baseline approach has two major drawbacks:
 
-1. The initialization, shutdown and startup times of the entire set of components will be incurred every time the configuration is updated.
+1. The shutdown, initialization, and startup times of the entire set of components will be incurred every time the configuration is updated.
 2. The developer will lose any application state stored in the components whenever the config is modified.
 
 The startup and shutdown time issues are potentially problematic because of the general increase to cycle time. However, it might not be too bad depending on exactly how long it takes sub-components to start. Most commonly-used components take only a few milliseconds to rebuild and restart. This is a cost that most Component workflows absorb without too much trouble.
@@ -38,7 +38,7 @@ Whenever the configuration changes, the following procedure will be used:
 4. The `preserve` function will selectively copy state out of the old, stopped component into the new, not-yet-started component. It should be careful not to copy any state that would be invalidated by a configuration change.
 5. Call `start` on the new runtime.
 
-Arachne will not provide a mitigation for avoiding the cost of stopping and starting individual components. If this becomes a pain point, we can explore solutions such as taht offered by Suspendable.
+Arachne will not provide a mitigation for avoiding the cost of stopping and starting individual components. If this becomes a pain point, we can explore solutions such as that offered by Suspendable.
  
 ## Status
 
