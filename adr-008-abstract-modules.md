@@ -7,7 +7,7 @@ One design goal of Arachne is to have modules be relatively easily swappable. Us
 Some examples of the alternative implementations that people might wish to use for various parts of their application:
 
 - HTTP Server: Pedestal or Ring
-- Database: Datomic, a RDBMS or one of many NoSQL options.
+- Database: Datomic, an RDBMS or one of many NoSQL options.
 - HTML Templating: Hiccup, Enlive, StringTemplate, etc.
 - Client-side code: ClojureScript, CoffeeScript, Elm, etc.
 - Authentication: Password-based, OpenID, Facebook, Google, etc.
@@ -15,7 +15,7 @@ Some examples of the alternative implementations that people might wish to use f
 
 This is only a representative sample; the actual list is unbounded.
 
-The need for this kind of flexibilty raises some design concerns:
+The need for this kind of flexibility raises some design concerns: 
 
 **Capability**. Users should always be able to leverage the full power of their chosen technology. That is, they should not have to code to the "least common denominator" of capability. If they use Datomic Pro, for example, they should be able to write Datalog and fully utilize the in-process Peer model, not be restricted to an anemic "ORM" that is also compatible with RDBMSs.
 
@@ -32,7 +32,7 @@ The following list enumerates the ways in which it is possible to "use" a module
 3. You can read the attributes defined in the module from the configuration.
 4. You can write configuration data using the attributes defined in the module.
 
-These tools allow the definition of modules with many different kinds of relationships to eachother. Speaking loosely, these relationships can corresond to other well-known patterns in software development including composition, mixins, interface/implementation, inheritance, etc.
+These tools allow the definition of modules with many different kinds of relationships to each other. Speaking loosely, these relationships can correspond to other well-known patterns in software development including composition, mixins, interface/implementation, inheritance, etc.
 
 ## Decision
 
@@ -52,16 +52,16 @@ As mentioned above, Arachne would like to support both Ring and Pedestal as HTTP
 
 - The concept of a "server" running on a port.
 - The concept of a URL path/route
-- The concept of a terminal "handler" function which recieves a request and returns a response.
+- The concept of a terminal "handler" function which receives a request and returns a response.
 
-There also have some key differences:
+They also have some key differences:
 
-- Ring composes "middleware" functions, wheras Pedestal uses "interceptor" objects
+- Ring composes "middleware" functions, whereas Pedestal uses "interceptor" objects
 - Asynchronous responses are handled differently
 
 Therefore, it makes sense to define an abstract HTTP module which defines the basic domain concepts; servers, routes, handlers, etc. Many dependent modules and applications will be able to make real use of this subset.
 
-Then, there will be the two modules which provide concerete implementations; one for Pedestal, one for Ring. These will contain the code that actually reads the configuration, and at runtime builds appropriate routing tables, starts server instances, etc. Applications which wish to make direct use of a specific feature like Pedestal interceptors may freely do so, using attributes defined by the Pedestal module.
+Then, there will be the two modules which provide concrete implementations; one for Pedestal, one for Ring. These will contain the code that actually reads the configuration, and at runtime builds appropriate routing tables, starts server instances, etc. Applications which wish to make direct use of a specific feature like Pedestal interceptors may freely do so, using attributes defined by the Pedestal module.
 
 ## Status
 
