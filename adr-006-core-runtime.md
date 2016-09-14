@@ -32,7 +32,7 @@ Additionally, it must be possible for different system components to have depend
 
 Arachne uses the [Component](https://github.com/stuartsierra/component) library to manage system components. Instead of requiring users to define a component system map manually, however, Arachne itself builds one based upon the Arachne config via *Configuration Entities* that appear in the configuration.
 
-Component entities may be added to the config directly by end users (via a initialization script as per [ADR-005](adr-005-user-facing-config.md)), or by modules in their `configure` function ([ADR-004](module-loading.md).)
+Component entities may be added to the config directly by end users (via a initialization script as per [ADR-005](adr-005-user-facing-config.md)), or by modules in their `configure` function ([ADR-004](adr-004-module-loading.md).)
 
 Component entities have attributes which indicates which other components they depend upon. Circular dependencies are not allowed; the component dependency structure must form a Directed Acyclic Graph (DAG.) The dependency attributes also specify the key that Component will use to `assoc` dependencies.
 
