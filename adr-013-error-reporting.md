@@ -4,16 +4,16 @@
 
 Historically, error handling has not been Clojure's strong suite. For the most part, errors take the form of a JVM exception, with a long stack trace that includes a lot of Clojure's implementation as well as stack frames that pertain directly to user code.
 
-Additionally, prior to the advent of `clojure.spec`, Clojure errors were often "deep": an very generic error (like an NPE) would be thrown from far within a branch, rather than eagerly validating inputs.
+Additionally, prior to the advent of `clojure.spec`, Clojure errors were often "deep": a very generic error (like a NullPointerException) would be thrown from far within a branch, rather than eagerly validating inputs.
 
-There are Clojure libraries which make an attempt to improve the situation, but they typically do it by overriding Clojure's default exception printing functions across the board, and are sometimes "lossy", dropping information that  could be desirable to a 
+There are Clojure libraries which make an attempt to improve the situation, but they typically do it by overriding Clojure's default exception printing functions across the board, and are sometimes "lossy", dropping information that could be desirable to a developer.
 
 Spec provides an opportunity to improve the situation across the board, and with Arachne we want to be on the leading edge of providing helpful error messages that point straight to the problem, minimize time spent trying to figure out what's going on, and let developers get straight back to working on what matters to them.
 
 Ideally, Arachne's error handling should exhibit the following qualities:
 
-- Never hide posibly relevant information
-- Allow module developers to be as helpful as possible to people using their tools
+- Never hide possibly relevant information.
+- Allow module developers to be as helpful as possible to people using their tools.
 - Provide rich, colorful, multi-line detailed explanations of what went wrong (when applicable.)
 - Be compatible with existing Clojure error-handling practices for errors thrown from libraries that Arachne doesn't control.
 - Not violate expectations of experienced Clojure programmers.
@@ -22,7 +22,7 @@ Ideally, Arachne's error handling should exhibit the following qualities:
 
 ## Decision
 
-We will seperate the problems of creating rich exceptions, and catching them and displaying them to the user.
+We will separate the problems of creating rich exceptions, and catching them and displaying them to the user.
 
 ### Creating Errors
 
@@ -30,16 +30,16 @@ Whenever a well-behaved Arachne module needs to report an error, it should throw
 
 However, in the `ex-data`, the exception will also contain much more detailed information, that can be used (in the correct context) to provide much more detailed or verbose errors. Specifically, it may contain the following keys:
 
-- `:arachne.error/message` - a long-form error message, complete with newlines and formatting.
-- `:arachne.error/type` - a namespaced keyword that uniquely identifies the type of error.
-- `:arachne.error/spec` - The spec that failed (if applicable)
-- `:arachne.error/failed-data` - The data that failed to match the spec (if applicable)
+- `:arachne.error/message` - A long-form error message, complete with newlines and formatting.
+- `:arachne.error/type` - A namespaced keyword that uniquely identifies the type of error.
+- `:arachne.error/spec` - The spec that failed (if applicable).
+- `:arachne.error/failed-data` - The data that failed to match the spec (if applicable).
 - `:arachne.error/explain-data` - An explain-data for the spec that failed (if applicable).
 - `:arachne.error/env` - A map of the locals in the env at the time the error was thrown.
 
-Exceptions may, of course containy additional data; these are the common keys that tools can use to more effectively render errors.
+Exceptions may, of course, contain additional data; these are the common keys that tools can use to more effectively render errors.
 
-There will be a suite of tools, provided with Arachne's core, for conveniently  generating errors that match this pattern.
+There will be a suite of tools, provided with Arachne's core, for conveniently generating errors that match this pattern.
 
 ### Displaying Errors
 
@@ -55,9 +55,9 @@ PROPOSED
 
 ## Consequences
 
-- Error handling will follow well-known JVM patterns
+- Error handling will follow well-known JVM patterns.
 - If users want, they can get much richer errors than baseline exception handling.
-- The "enhanced" exception handling is optional and will not be present in production
+- The "enhanced" exception handling is optional and will not be present in production.
  
 
 

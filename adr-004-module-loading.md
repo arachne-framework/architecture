@@ -59,7 +59,7 @@ Each module JAR will contain a special `arachne-modules.edn` file at
 the root of its classpath. This data file (when read) contains a
 sequence of *module definition maps*.
 
-Each module definition map contain the following information:
+Each module definition map contains the following information:
 
 - The formal name of the module (as a namespaced symbol.)
 - A list of dependencies of the module (as a set of namespaced
