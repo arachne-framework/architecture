@@ -36,7 +36,7 @@ Component entities may be added to the config directly by end users (via a initi
 
 Component entities have attributes which indicates which other components they depend upon. Circular dependencies are not allowed; the component dependency structure must form a Directed Acyclic Graph (DAG.) The dependency attributes also specify the key that Component will use to `assoc` dependencies.
 
-Component entities also have an attribute that specifies a *component constructor function* (via a fully qualified name.) Component constructor functions must take two arguments: the configuration, and the entity ID of the component that is to be constructed. When invoked, a component construct must return a runtime component object, to be used by the Component library. This may be any object that implements `clojure.lang.Associative`, and may also optionally satisfy Component's `Lifecycle` protocol.
+Component entities also have an attribute that specifies a *component constructor function* (via a fully qualified name.) Component constructor functions must take two arguments: the configuration, and the entity ID of the component that is to be constructed. When invoked, a component constructor must return a runtime component object, to be used by the Component library. This may be any object that implements `clojure.lang.Associative`, and may also optionally satisfy Component's `Lifecycle` protocol.
 
 #### Arachne Runtime
 
