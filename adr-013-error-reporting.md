@@ -30,10 +30,12 @@ Whenever a well-behaved Arachne module needs to report an error, it should throw
 
 However, in the `ex-data`, the exception will also contain much more detailed information, that can be used (in the correct context) to provide much more detailed or verbose errors. Specifically, it may contain the following keys:
 
-- `:arachne.error/message` - A long-form error message, complete with newlines and formatting.
-- `:arachne.error/type` - A namespaced keyword that uniquely identifies the type of error.
-- `:arachne.error/spec` - The spec that failed (if applicable).
-- `:arachne.error/failed-data` - The data that failed to match the spec (if applicable).
+- `:arachne.error/message` - The short-form error message (the same as the Exception message.)
+- `:arachne.error/explanation` - a long-form error message, complete with newlines and formatting.
+- `:arachne.error/suggestions` - Zero or more suggestions on how the error might be fixed.
+- `:arachne.error/type` - a namespaced keyword that uniquely identifies the type of error.
+- `:arachne.error/spec` - The spec that failed (if applicable)
+- `:arachne.error/failed-data` - The data that failed to match the spec (if applicable)
 - `:arachne.error/explain-data` - An explain-data for the spec that failed (if applicable).
 - `:arachne.error/env` - A map of the locals in the env at the time the error was thrown.
 
