@@ -155,6 +155,31 @@ Domain entities are represented, in application code, as simple Clojure maps. In
 
 Entity keys are restricted to being namespace-qualified keywords, which correspond with the attribute names defined in configuration (see _Attribute Definitions_ above). Other keys will be ignored in Chimera's operations. Values may be any Clojure value, subject to spec validation before certain operations.
 
+Cardinality-many attributes *must* use a Clojure sequence, even if there is only one value.
+
+Reference values are represented in one of two ways; as a nested map, or as a _lookup reference_.
+
+Nested maps are straightforward. For example: 
+
+````
+{:myapp.person/id 123
+ :myapp.person/name "Bill"
+ :myapp.person/friends [{:myapp.person/id 42
+                          :myapp.person/name "Joe"}]}
+````
+
+Lookup references are special values that identify an attribute (which must be a key) and value to indicate the target reference. Chimera provides a tagged literal specifially for lookup references.
+
+````
+{:myapp.person/id 123
+ :myapp.person/name "Bill"
+ :myapp.person/friends [#chimera.key[:myapp.person/id 42]]}
+````
+
+All Chimera operations that return data should use one of these representations. 
+
+Both representations are largely equivalent, but there is an important note about passing nested maps to persistence operations: the intended semantics for any nested maps must be the same as the parent map. For example, you cannot call `create` and expect the top-level entity to be created while the nested entity is updated.
+
 Entities do *not* need to explicitly declare their entity type. Types may be derived from inspecting the set of keys and comparing it to the Entity Types defined in the configuration.
 
 #### Persistence Operations
