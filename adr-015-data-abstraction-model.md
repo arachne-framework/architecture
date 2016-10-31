@@ -54,7 +54,7 @@ At the data model level, Chimera should be a powerful, easy to use way to specif
 
 #### Adapters
 
-Chimera _Adapters_ are Arachne modules which take the abstract data structures and operations defined by Chimera, and extend them to specific databases or database APIs such as JDBC, Datomic, 
+Chimera _Adapters_ are Arachne modules which take the abstract data structures and operations defined by Chimera, and extend them to specific databases or database APIs such as JDBC, Datomic, MongoDB, etc.
 
 When applicable, there can also be "abstract adapters" that do the bulk of the work of adapting Chimera to some particular genre of database. For example, most key/value stores have similar semantics and core operations: there will likely be a "Key/Value Adapter" that does the bulk of the work for adapting Chimera's operations to key/value storage, and then several thin _concrete_ adapters that implement the actual get/put commands for Cassandra, DynamoDB, Redis, etc.
 
@@ -135,16 +135,9 @@ Chimera also provides a `generate-spec` operation which programmatically builds 
 
 #### Schema & Migration Operations
 
-_editor's note: this section may change as ADR-16 is written, please withhold commentary until that is done_
-
 In order for data persistence to actually work, the schema of a particular database instance (at least, for those that have schema) needs to be compatible with the application's data model, as defined by Chimera's entity types and attributes.
 
-To help meet this need, Chimera defines two operations which adapters must satisfy:
-
-- `compatible?` - given a configuration and a database instance, report whether the database is currently capable of persisting every entity type defined in the configuration.
-- `install` - given a configuration and a database, update the database's schema such that a subsequent call to `compatible?` would return true. Throw an error if it is impossible to update the database in such a way.
-
-Obviously, this begs many questions about how and when users should invoke `install`, how to manage production databases over time, how to reliably and deterministically provision identical new databases for testing, etc. These concerns are discussed at length in ADR-16, which covers database provisioning and migrations, and how these interact with Chimera's data model.
+See [ADR-16](adr-016-db-migrations.md) for an in-depth discussion of database migrations work, and the ramifications for how a Chimera data model is declared in the configuration.
 
 ### Entity Manipulation
 
