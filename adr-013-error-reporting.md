@@ -2,7 +2,7 @@
 
 ## Context
 
-Historically, error handling has not been Clojure's strong suite. For the most part, errors take the form of a JVM exception, with a long stack trace that includes a lot of Clojure's implementation as well as stack frames that pertain directly to user code.
+Historically, error handling has not been Clojure's strong suit. For the most part, errors take the form of a JVM exception, with a long stack trace that includes a lot of Clojure's implementation as well as stack frames that pertain directly to user code.
 
 Additionally, prior to the advent of `clojure.spec`, Clojure errors were often "deep": a very generic error (like a NullPointerException) would be thrown from far within a branch, rather than eagerly validating inputs.
 
