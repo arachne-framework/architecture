@@ -190,6 +190,12 @@ Each of these operations has its own protocol which may be required by modules, 
 
 This set of operations is not exhaustive; other modules and adapters are free to extend Chimera and define additional operations, with different or stricter semantics. These operations are those that it is possible to implement consistently, in a reasonably performant way, against a "broad enough" set of very different types of databases.
 
+To make it possible for them to be composed more flexibly, operations are expressed as data, not as direct methods.
+
+#### Capability Model
+
+Adapters must specify a list of what operations they support. Modules should validate this list at runtime, to ensure the adapter works with the operations that they require.
+
 ## Status
 
 PROPOSED
