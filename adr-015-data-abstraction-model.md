@@ -196,6 +196,8 @@ To make it possible for them to be composed more flexibly, operations are expres
 
 Adapters must specify a list of what operations they support. Modules should validate this list at runtime, to ensure the adapter works with the operations that they require.
 
+In addition to specifying whether an operation is supported or not, adapters must specify whether they support the operation idempotently and/or transactionally.
+
 ## Status
 
 PROPOSED
