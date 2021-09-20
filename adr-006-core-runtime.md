@@ -24,7 +24,7 @@ As discussed in [ADR-004](adr-004-module-loading.md), tasks in the "starting the
 
 This leaves the Arachne and application-specific startup tasks. Arachne should provide an orderly, structured startup (and shutdown) procedure, and make it possible for modules and application authors to hook into it to ensure that their own code initializes, starts and stops as desired.
 
-Additionally, it must be possible for different system components to have dependencies on eachother, such that when starting, services start *after* the services upon which they depend. Stopping should occur in reverse-dependency order, such that a service is never in a state where it is running but one of its dependencies is stopped.
+Additionally, it must be possible for different system components to have dependencies on each other, such that when starting, services start *after* the services upon which they depend. Stopping should occur in reverse-dependency order, such that a service is never in a state where it is running but one of its dependencies is stopped.
 
 ## Decision
 
